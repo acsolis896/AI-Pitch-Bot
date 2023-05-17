@@ -1,4 +1,3 @@
-import { process } from '/env'
 import { Configuration, OpenAIApi } from 'openai'
 
 const setupTextarea = document.getElementById('setup-textarea')
@@ -22,21 +21,21 @@ document.getElementById("send-btn").addEventListener("click", () => {
   }
 })
 
-async function fetchBotReply(outline) {
+async function fetchBotReply(song) {
   const response = await openai.createCompletion({
     model: 'text-davinci-003',
-    prompt: `Generate a short message to enthusiastically say an outline sounds interesting and that you need some minutes to think about it.
+    prompt: `Generate a short message to enthusiastically say a song choice sounds interesting and that you need some minutes to think about it.
     ###
-    outline: Two dogs fall in love and move to Hawaii to learn to surf.
-    message: I'll need to think about that. But your idea is amazing! I love the bit about Hawaii!
+    song: Tolerate It - Taylor Swift
+    message: I'll need to think about that. But your choice is amazing! I love the "evermore" album!
     ###
-    outline:A plane crashes in the jungle and the passengers have to walk 1000km to safety.
-    message: I'll spend a few moments considering that. But I love your idea!! A disaster movie in the jungle!
+    song: The Less I Know The Better
+    message: I'll spend a few moments considering that, but I love that song! Tame Impala is a great band!
     ###
-    outline: A group of corrupt lawyers try to send an innocent woman to jail.
-    message: Wow that is awesome! Corrupt lawyers, huh? Give me a few moments to think!
+    song: Mi Gente - J Balvin
+    message: Wow that is an awesome choice! J Balvin is such cool artist!
     ###
-    outline: ${outline}
+    song: ${song}
     message: 
     `,
     max_tokens: 60 
@@ -44,15 +43,16 @@ async function fetchBotReply(outline) {
   movieBossText.innerText = response.data.choices[0].text.trim()
 } 
 
-async function fetchSynopsis(outline) {
+
+async function fetchSynopsis(song) {
   const response = await openai.createCompletion({
     model: 'text-davinci-003',
-    prompt: `Generate an engaging, professional and marketable movie synopsis based on an outline. The synopsis should include actors names in brackets after each character. Choose actors that would be ideal for this role. 
+    prompt: `Generate an engaging, professional and marketable movie synopsis based on the lyrics of the song provided. The synopsis should include actors names in brackets after each character. Choose actors that would be ideal for this role. 
     ###
-    outline: A big-headed daredevil fighter pilot goes back to school only to be sent on a deadly mission.
-    synopsis: The Top Gun Naval Fighter Weapons School is where the best of the best train to refine their elite flying skills. When hotshot fighter pilot Maverick (Tom Cruise) is sent to the school, his reckless attitude and cocky demeanor put him at odds with the other pilots, especially the cool and collected Iceman (Val Kilmer). But Maverick isn't only competing to be the top fighter pilot, he's also fighting for the attention of his beautiful flight instructor, Charlotte Blackwood (Kelly McGillis). Maverick gradually earns the respect of his instructors and peers - and also the love of Charlotte, but struggles to balance his personal and professional life. As the pilots prepare for a mission against a foreign enemy, Maverick must confront his own demons and overcome the tragedies rooted deep in his past to become the best fighter pilot and return from the mission triumphant.  
+    song: Mi Gente - J Balvin
+    synopsis: Carmen (Zoe Saldana), a young woman feeling disconnected from her culture and lacking in passion, discovers the power of Latin dance and community after stumbling upon a video of people dancing to "Mi Gente." She finds a local dance studio and, despite feeling nervous, signs up for a class. As she learns to let go and dance freely, she connects with a group of strangers who share her love of movement and music. The dance instructor (Oscar Isaac) is charismatic and supportive, while the other dancers include a shy but talented young woman (Yara Shahidi), a flamboyant and energetic man (Lin-Manuel Miranda), and an older woman with a fiery spirit (Rita Moreno). "Mi Gente" becomes Carmen's anthem, and she learns to embrace her roots and find joy in her life once again.  
     ###
-    outline: ${outline}
+    song: ${song}
     synopsis: 
     `,
     max_tokens: 700
@@ -72,7 +72,7 @@ async function fetchTitle(synopsis) {
   })
   const title = response.data.choices[0].text.trim()
   document.getElementById('output-title').innerText = title
-  fetchImagePromt(title, synopsis)
+  fetchImagePrompt(title, synopsis)
 }
 
 async function fetchStars(synopsis){
@@ -91,7 +91,7 @@ async function fetchStars(synopsis){
   document.getElementById('output-stars').innerText = response.data.choices[0].text.trim()
 }
 
-async function fetchImagePromt(title, synopsis){
+async function fetchImagePrompt(title, synopsis){
   const response = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: `Give a short description of an image which could be used to advertise a movie based on a title and synopsis. The description should be rich in visual detail but contain no names.
